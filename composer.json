@@ -1,0 +1,23 @@
+{
+  "name": "csaba-nagy/secret-server",
+  "description": "My solution to the Secret Server Task",
+  "type": "project",
+  "scripts": {
+    "dev": "php -S localhost:8080 -t ./public"
+  },
+  "autoload": {
+    "psr-4": {
+      "SecretServer\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Csaba Nagy",
+      "email": "dev.csaba.nagy@gmail.com"
+    }
+  ],
+  "minimum-stability": "stable",
+  "require-dev": {
+    "symfony/var-dumper": "^6.2"
+  }
+}
