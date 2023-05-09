@@ -19,5 +19,8 @@
   "minimum-stability": "stable",
   "require-dev": {
     "symfony/var-dumper": "^6.2"
+  },
+  "require": {
+    "ramsey/uuid": "^4.7"
   }
 }
