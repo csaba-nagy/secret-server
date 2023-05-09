@@ -104,6 +104,16 @@ final class DatabaseConnector
     return $this->prepare($query, $params)->fetchAll();
   }
 
+  /**
+   *
+   * @param null|string $name
+   * @return int
+   */
+  public function getLastInsertedId(?string $name = null): int
+  {
+    return (int) $this->pdo?->lastInsertId($name);
+  }
+
   // TODO: Add a proper param description
   /**
    * @param DatabaseDriver $driver
