@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: May 09, 2023 at 05:49 PM
+-- Generation Time: May 09, 2023 at 10:19 PM
 -- Server version: 10.4.28-MariaDB-1:10.4.28+maria~ubu2004
 -- PHP Version: 8.1.18
 
@@ -90,10 +90,10 @@ ALTER TABLE `secret_expirations`
 --
 
 --
--- Constraints for table `secrets`
+-- Constraints for table `secret_expirations`
 --
-ALTER TABLE `secrets`
-  ADD CONSTRAINT `secret_expirations_fk` FOREIGN KEY (`id`) REFERENCES `secret_expirations` (`secret_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `secret_expirations`
+  ADD CONSTRAINT `secret_id_fk` FOREIGN KEY (`secret_id`) REFERENCES `secrets` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
