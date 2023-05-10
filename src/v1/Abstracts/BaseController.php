@@ -4,23 +4,26 @@ declare(strict_types=1);
 
 namespace SecretServer\Api\v1\Abstracts;
 
-abstract class BaseController
+use Exception;
+use SecretServer\Api\v1\Contracts\ControllerInterface;
+use SecretServer\Api\v1\Http\Request;
+
+abstract class BaseController implements ControllerInterface
 {
   public function __construct(protected BaseRepository $repository)
   {
   }
 
-  /**
-   *
-   * @param array $payload
-   * @return array
-   */
-  abstract public function create(array $payload): array;
+  abstract public function index(): string;
 
-  /**
-   *
-   * @param string $arg
-   * @return null|array
-   */
-  abstract public function get(string $arg): ?array;
+  public function create(Request $request): array
+  {
+    throw new Exception('Not implemented');
+  }
+
+  public function get(Request $request): ?array
+  {
+    throw new Exception('Not implemented');
+  }
+
 }
