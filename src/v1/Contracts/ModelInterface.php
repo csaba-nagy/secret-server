@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace SecretServer\Contracts;
+namespace SecretServer\Api\v1\Contracts;
 
 interface ModelInterface
 {
