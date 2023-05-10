@@ -21,4 +21,11 @@ abstract class BaseRepository
    * @return array
    */
   abstract public function create(array $payload): array;
+
+  /**
+   *
+   * @param string $arg
+   * @return null|array
+   */
+  abstract public function get(string $arg): ?array;
 }

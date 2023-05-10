@@ -26,6 +26,10 @@ class SecretRepository extends BaseRepository
     return $this->model->create($payload);
   }
 
+  /**
+   * @param string $hash
+   * @return null|array
+   */
   public function get(string $hash): ?array
   {
     return $this->model->get($hash);
