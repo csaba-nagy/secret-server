@@ -11,8 +11,8 @@ use SecretServer\Models\Abstractions\BaseModel;
 
 class SecretModel extends BaseModel
 {
-  private int $defaultViews = 5;
-  private int $defaultExpirationInMinutes = 5;
+  private $defaultViews = 5;
+  private $defaultExpirationInMinutes = 5;
 
   public function __construct()
   {
@@ -41,7 +41,7 @@ class SecretModel extends BaseModel
 
     $lastInsertedId = $this->database->getLastInsertedId();
 
-    $this->setExpiration($lastInsertedId, $payload['expiresAfter'], $payload['expireAfterViews']);
+    $this->setExpiration($lastInsertedId);
 
     return $this->getByHash($payload['hash']);
   }
@@ -68,8 +68,6 @@ class SecretModel extends BaseModel
             where 1=1
               and secrets.hash=:hash
             SQL;
-    // TODO: handle expiration after views
-    $this->destroyIfExpired();
 
     return $this->database->fetch($query, ['hash' => $hash]);
   }
@@ -90,31 +88,12 @@ class SecretModel extends BaseModel
               values(:secret_id, NOW() + INTERVAL :expires_at MINUTE, :remaining_views)
               SQL;
 
+    $expiration = $minutes ?? $this->defaultExpirationInMinutes;
+
     $this->database->fetch($query, [
       'secret_id' => $id,
-      'expires_at' => $minutes ?? $this->defaultExpirationInMinutes,
+      'expires_at' => $expiration,
       'remaining_views' => $remainingViews ?? $this->defaultViews
     ]);
-  }
-
-  // Maybe it's not the most performant solution,
-  // but I would like to handle the expirations in code, not in the database in this case
-  /**
-   *
-   * @return void
-   * @throws InvalidArgumentException
-   * @throws PDOException
-   */
-  private function destroyIfExpired(): void
-  {
-    $query = <<<SQL
-              delete secrets, secret_expirations
-                from secrets
-                inner join secret_expirations on 1=1
-                  and secrets.id=secret_expirations.secret_id
-                where secret_expirations.expires_at < NOW()
-            SQL;
-
-    $this->database->fetch($query);
   }
 }
