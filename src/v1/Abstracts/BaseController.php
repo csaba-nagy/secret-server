@@ -10,11 +10,24 @@ use SecretServer\Api\v1\Http\Request;
 
 abstract class BaseController implements ControllerInterface
 {
-  public function __construct(protected BaseRepository $repository)
+  public function __construct(protected ?BaseRepository $repository = null)
   {
   }
 
   abstract public function index(): string;
+
+  /**
+   *
+   * @param Request $request
+   * @return string|array
+   * @throws Exception
+   */
+  public function read(Request $request): string | array
+  {
+    return empty($request->getParams())
+      ? $this->index()
+      : $this->get($request);
+  }
 
   public function create(Request $request): array
   {

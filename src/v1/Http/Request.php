@@ -22,9 +22,9 @@ class Request
     $this->httpMethod = strtolower($_SERVER['REQUEST_METHOD']);
 
     $this->method = match ($this->httpMethod) {
-      AllowedHttpMethods::get->value => 'get',
+      AllowedHttpMethods::get->value => 'read',
       AllowedHttpMethods::post->value => 'create',
-      default => 'index'
+      default => 'read'
     };
 
     $this->payload = $this->httpMethod === AllowedHttpMethods::post->value
@@ -52,6 +52,7 @@ class Request
     return $this->method;
   }
 
+  // TODO: Should be refactored to take a string $key parameter optionally
   /**
    *
    * @return null|array
