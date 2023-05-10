@@ -43,7 +43,7 @@ class SecretModel extends BaseModel
 
     $this->setExpiration($lastInsertedId);
 
-    return $this->getByHash($payload['hash']);
+    return $this->get($payload['hash']);
   }
 
   /**
@@ -53,7 +53,7 @@ class SecretModel extends BaseModel
    * @throws InvalidArgumentException
    * @throws PDOException
    */
-  public function getByHash(string $hash): ?array
+  public function get(string $hash): ?array
   {
     $query = <<<SQL
             select

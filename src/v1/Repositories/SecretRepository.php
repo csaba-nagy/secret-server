@@ -28,10 +28,6 @@ class SecretRepository extends BaseRepository
 
   public function get(string $hash): ?array
   {
-    if (!$this->model instanceof SecretModel) {
-      return null;
-    }
-
-    return $this->model->getByHash($hash);
+    return $this->model->get($hash);
   }
 }
