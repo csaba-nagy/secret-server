@@ -7,4 +7,6 @@ namespace SecretServer\Api\v1\Contracts;
 interface ModelInterface
 {
   public function create(array $payload): array;
+
+  public function get(string $arg): ?array;
 }
