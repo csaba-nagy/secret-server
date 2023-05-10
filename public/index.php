@@ -7,7 +7,7 @@ require __DIR__ . '/../vendor/autoload.php';
 
 try {
   $model = new SecretModel();
-  dump($model->getByHash('abcde12345'));
+  dump($model->get('abcde12345'));
 } catch (\Throwable $th) {
   dump($th->getMessage());
 }
