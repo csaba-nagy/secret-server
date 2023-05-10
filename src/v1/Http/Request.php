@@ -24,7 +24,7 @@ class Request
     $this->method = match ($this->httpMethod) {
       AllowedHttpMethods::get->value => 'get',
       AllowedHttpMethods::post->value => 'create',
-      default => 'get'
+      default => 'index'
     };
 
     $this->payload = $this->httpMethod === AllowedHttpMethods::post->value

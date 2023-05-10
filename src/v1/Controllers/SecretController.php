@@ -3,6 +3,7 @@
 namespace SecretServer\Api\v1\Controllers;
 
 use SecretServer\Api\v1\Abstracts\BaseController;
+use SecretServer\Api\v1\Http\Request;
 use SecretServer\Api\v1\Repositories\SecretRepository;
 
 class SecretController extends BaseController
@@ -12,23 +13,18 @@ class SecretController extends BaseController
     parent::__construct(new SecretRepository());
   }
 
-  /**
-   *
-   * @param array $payload
-   * @return array
-   */
-  public function create(array $payload): array
+  public function index(): string
   {
-    return $this->repository->create($payload);
+    return 'These aren\'t the secrets you\'re looking for.';
   }
 
-  /**
-   *
-   * @param string $hash
-   * @return null|array
-   */
-  public function get(string $hash): ?array
+  public function create(Request $request): array
   {
-    return $this->repository->get($hash);
+    return $this->repository->create($request->getPayload());
+  }
+
+  public function get(Request $request): ?array
+  {
+    return $this->repository->get($request->getParams()['param']);
   }
 }
