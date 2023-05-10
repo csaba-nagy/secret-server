@@ -1,13 +1,13 @@
 <?php
 
+use SecretServer\Api\v1\Models\SecretModel;
 use SecretServer\Database\Database;
 
 require __DIR__ . '/../vendor/autoload.php';
 
 try {
-  $db = Database::getConnection();
-
-  dump($db->isConnected());
+  $model = new SecretModel();
+  dump($model->getByHash('abcde12345'));
 } catch (\Throwable $th) {
   dump($th->getMessage());
 }

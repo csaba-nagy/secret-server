@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace SecretServer\Models;
+namespace SecretServer\Api\v1\Models;
 
 use InvalidArgumentException;
 use PDOException;
+use SecretServer\Api\v1\Abstracts\BaseModel;
 use SecretServer\Database\Database;
-use SecretServer\Models\Abstractions\BaseModel;
 
 class SecretModel extends BaseModel
 {

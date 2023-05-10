@@ -3,9 +3,9 @@
 
 declare(strict_types=1);
 
-namespace SecretServer\Models\Abstractions;
+namespace SecretServer\Api\v1\Abstracts;
 
-use SecretServer\Contracts\ModelInterface;
+use SecretServer\Api\v1\Contracts\ModelInterface;
 use SecretServer\Database\DatabaseConnector;
 
 abstract class BaseModel implements ModelInterface
