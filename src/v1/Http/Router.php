@@ -7,6 +7,7 @@ namespace SecretServer\Api\v1\Http;
 use SecretServer\Api\v1\Contracts\ControllerInterface;
 use SecretServer\Api\v1\Exceptions\RouteNotFoundException;
 use SecretServer\Api\v1\Http\Request;
+use SecretServer\Enums\HttpStatusCode;
 
 final class Router
 {
@@ -53,6 +54,10 @@ final class Router
     }
 
     // Throws generic exception for security reasons
+
+    //TODO: Add ErrorController
+    http_response_code(HttpStatusCode::NOT_FOUND->value);
+
     throw new RouteNotFoundException();
   }
 }

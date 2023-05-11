@@ -4,27 +4,28 @@ declare(strict_types=1);
 
 namespace SecretServer\Api\v1\Contracts;
 
-use SecretServer\Api\v1\Http\Request;
+use SecretServer\Api\v1\Http\{Request, Response};
 
 interface ControllerInterface
 {
   /**
    *
-   * @return string
+   * @param Request $request
+   * @return Response
    */
-  public function index(): string;
+  public function index(Request $request): Response;
 
   /**
    *
    * @param Request $request
-   * @return null | array
+   * @return Response
    */
-  public function get(Request $request): ?array;
+  public function get(Request $request): Response;
 
   /**
    *
    * @param Request $request
-   * @return array
+   * @return Response
    */
-  public function create(Request $request): array;
+  public function create(Request $request): Response;
 }
