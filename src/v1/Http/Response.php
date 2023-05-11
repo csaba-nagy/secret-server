@@ -28,7 +28,7 @@ class Response implements ResponseInterface
   {
     return match (1) {
       preg_match('/application\/json/', $this->acceptHeader) => $this->sendJSON(),
-      default => $this->rejectWith(HttpStatusCode::NOT_ACCEPTABLE, 'INVALID_OR_MISSING_HEADER_PARAMETER')
+      default => $this->reject(HttpStatusCode::NOT_ACCEPTABLE, 'INVALID_OR_MISSING_HEADER_PARAMETER')
     };
   }
 
@@ -56,7 +56,7 @@ class Response implements ResponseInterface
    * @return string
    * @throws Exception
    */
-  public function rejectWith(HttpStatusCode $statusCode, string $message): string
+  private function reject(HttpStatusCode $statusCode, string $message): string
   {
     http_response_code($statusCode->value);
 
