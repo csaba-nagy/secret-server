@@ -22,9 +22,9 @@ abstract class BaseController implements ControllerInterface
    * @return string|array
    * @throws Exception
    */
-  public function read(Request $request): string | array
+  public function read(Request $request): null | string | array
   {
-    return empty($request->getParams())
+    return empty($request->getParams()['param'])
       ? $this->index()
       : $this->get($request);
   }
