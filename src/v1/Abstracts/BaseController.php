@@ -29,15 +29,10 @@ abstract class BaseController implements ControllerInterface
       : $this->get($request);
   }
 
-  /**
-   *
-   * @param Request $request
-   * @return Response
-   * @throws Exception
-   */
+  // TODO: Find a better way to handle false post requests than redirect
   public function create(Request $request): Response
   {
-    throw new Exception('Not implemented');
+    return $this->index($request);
   }
 
   /**
