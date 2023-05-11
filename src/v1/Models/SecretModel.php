@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SecretServer\Api\v1\Models;
 
+use DateTimeImmutable;
 use InvalidArgumentException;
 use PDOException;
 use SecretServer\Api\v1\Abstracts\BaseModel;
@@ -60,7 +61,8 @@ class SecretModel extends BaseModel
               secrets.hash as hash,
               secrets.secret as secretText,
               secrets.created_at as createdAt,
-              secret_expirations.expires_at as expiresAt
+              secret_expirations.expires_at as expiresAt,
+              secret_expirations.remaining_views as remainingViews
             from
               secrets
               join secret_expirations on 1=1
@@ -69,7 +71,13 @@ class SecretModel extends BaseModel
               and secrets.hash=:hash
             SQL;
 
-    return $this->database->fetch($query, ['hash' => $hash]);
+    $secret = $this->database->fetch($query, ['hash' => $hash]);
+
+    if (empty($secret) || $this->isExpired($secret)) {
+      return null;
+    }
+
+    return $secret;
   }
 
   /**
@@ -95,5 +103,21 @@ class SecretModel extends BaseModel
       'expires_at' => $expiration,
       'remaining_views' => $remainingViews ?? $this->defaultViews
     ]);
+  }
+
+  /**
+   * Checks that the fetched secret is expired
+   * @param array $fetchedSecret
+   * @return bool
+   */
+  private function isExpired(array $fetchedSecret): bool
+  {
+    $remainingViews = $fetchedSecret[0]['remainingViews'];
+    $expiresAt = $fetchedSecret[0]['expiresAt'];
+
+    $now = new DateTimeImmutable();
+
+    return $remainingViews === 0
+      || $expiresAt < $now->format('Y-m-d H:i:s');
   }
 }
