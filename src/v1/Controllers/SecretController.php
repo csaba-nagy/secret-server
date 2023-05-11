@@ -3,8 +3,9 @@
 namespace SecretServer\Api\v1\Controllers;
 
 use SecretServer\Api\v1\Abstracts\BaseController;
-use SecretServer\Api\v1\Http\Request;
+use SecretServer\Api\v1\Http\{Request, Response};
 use SecretServer\Api\v1\Repositories\SecretRepository;
+use SecretServer\Enums\HttpStatusCode;
 
 class SecretController extends BaseController
 {
@@ -13,18 +14,30 @@ class SecretController extends BaseController
     parent::__construct(new SecretRepository());
   }
 
-  public function index(): string
+  public function index(Request $request): Response
   {
-    return 'These aren\'t the secrets you\'re looking for.';
+    $body = 'These aren\'t the secrets you\'re looking for.';
+
+    return new Response($request->getAcceptHeader(), HttpStatusCode::OK, $body);
   }
 
-  public function create(Request $request): array
+  public function create(Request $request): Response
   {
-    return $this->repository->create($request->getPayload());
+    $body = $this->repository->create($request->getPayload());
+
+    return new Response($request->getAcceptHeader(), HttpStatusCode::CREATED, $body);
   }
 
-  public function get(Request $request): ?array
+  public function get(Request $request): Response
   {
-    return $this->repository->get($request->getParams()['param']);
+    $body = $this->repository->get($request->getParams()['param']);
+    $status = is_null($body) ? HttpStatusCode::NOT_FOUND : HttpStatusCode::OK;
+
+    // TODO: Make a createResponse method instead
+    return new Response(
+      $request->getAcceptHeader(),
+      $status,
+      $body ?? 'NOT_FOUND'
+    );
   }
 }

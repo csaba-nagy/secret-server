@@ -6,7 +6,7 @@ namespace SecretServer\Api\v1\Abstracts;
 
 use Exception;
 use SecretServer\Api\v1\Contracts\ControllerInterface;
-use SecretServer\Api\v1\Http\Request;
+use SecretServer\Api\v1\Http\{Request, Response};
 
 abstract class BaseController implements ControllerInterface
 {
@@ -14,27 +14,39 @@ abstract class BaseController implements ControllerInterface
   {
   }
 
-  abstract public function index(): string;
+  abstract public function index(Request $request): Response;
 
   /**
    *
    * @param Request $request
-   * @return string|array
+   * @return Response
    * @throws Exception
    */
-  public function read(Request $request): null | string | array
+  public function read(Request $request): Response
   {
     return empty($request->getParams()['param'])
-      ? $this->index()
+      ? $this->index($request)
       : $this->get($request);
   }
 
-  public function create(Request $request): array
+  /**
+   *
+   * @param Request $request
+   * @return Response
+   * @throws Exception
+   */
+  public function create(Request $request): Response
   {
     throw new Exception('Not implemented');
   }
 
-  public function get(Request $request): ?array
+  /**
+   *
+   * @param Request $request
+   * @return Response
+   * @throws Exception
+   */
+  public function get(Request $request): Response
   {
     throw new Exception('Not implemented');
   }

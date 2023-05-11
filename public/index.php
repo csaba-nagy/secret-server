@@ -7,7 +7,7 @@ require __DIR__ . '/../vendor/autoload.php';
 
 try {
   $router = new Router(new Request());
-  dump($router->resolve());
+  dump($router->resolve()->send());
 } catch (\Throwable $th) {
   dump($th->getMessage());
 }

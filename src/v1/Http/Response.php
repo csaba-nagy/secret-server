@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SecretServer\Api\v1\Http;
 
+use Exception;
 use SecretServer\Api\v1\Contracts\ResponseInterface;
 use SecretServer\Enums\HttpStatusCode;
 
@@ -25,12 +26,21 @@ class Response implements ResponseInterface
    */
   public function send(): string
   {
-    return match (true) {
+    return match (1) {
       preg_match('/application\/json/', $this->acceptHeader) => $this->sendJSON(),
-      default => $this->reject()
+      default => $this->rejectWith(HttpStatusCode::NOT_ACCEPTABLE, 'INVALID_OR_MISSING_HEADER_PARAMETER')
     };
   }
 
+  public function __toString()
+  {
+    return $this->send();
+  }
+
+  /**
+   * Sends a response to the client in JSON format
+   * @return string
+   */
   private function sendJSON(): string
   {
     http_response_code($this->statusCode->value);
@@ -38,12 +48,18 @@ class Response implements ResponseInterface
     return json_encode($this->body, JSON_PRETTY_PRINT);
   }
 
+
   /**
-   * Rejects the request with 406 Not Acceptable
-   * @return void
+   *
+   * @param HttpStatusCode $statusCode
+   * @param string $message
+   * @return string
+   * @throws Exception
    */
-  private function reject(): void
+  public function rejectWith(HttpStatusCode $statusCode, string $message): string
   {
-    http_response_code(HttpStatusCode::NOT_ACCEPTABLE->value);
+    http_response_code($statusCode->value);
+
+    throw new Exception($message);
   }
 }
