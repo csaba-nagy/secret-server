@@ -3,4 +3,4 @@ FROM secrets
 	INNER JOIN secret_expirations ON 1=1
     	AND secrets.id=secret_expirations.secret_id
         WHERE secret_expirations.expires_at < NOW()
-        	OR secret_expirations.remaining_views = 0
+        	OR secret_expirations.remaining_views <= 0
