@@ -5,6 +5,7 @@ namespace SecretServer\Api\v1\Controllers;
 use SecretServer\Api\v1\Abstracts\BaseController;
 use SecretServer\Api\v1\Http\{Request, Response};
 use SecretServer\Api\v1\Repositories\SecretRepository;
+use SecretServer\Api\v1\Utils\PayloadValidator;
 use SecretServer\Enums\HttpStatusCode;
 
 class SecretController extends BaseController
@@ -23,6 +24,23 @@ class SecretController extends BaseController
 
   public function create(Request $request): Response
   {
+    $schema = [
+      'secret' => 'text|minLength=3|maxLength=500',
+      'expiresAfter' => 'numeric=unsigned',
+      'expireAfterViews' => 'numeric=unsigned'
+    ];
+
+    $validator = new PayloadValidator($request->getPayload(), $schema);
+    ['error' => $error] = $validator->validate();
+
+    if (!empty($error)) {
+      return new Response(
+        $request->getAcceptHeader(),
+        HttpStatusCode::BAD_REQUEST,
+        $error
+      );
+    }
+
     $body = $this->repository->create($request->getPayload());
 
     return new Response($request->getAcceptHeader(), HttpStatusCode::CREATED, $body);
