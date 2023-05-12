@@ -12,7 +12,7 @@ use SecretServer\Database\Database;
 
 class SecretModel extends BaseModel
 {
-  private $defaultViews = 5;
+  private $defaultViews = 1;
   private $defaultExpirationInMinutes = 5;
 
   public function __construct()
@@ -44,7 +44,25 @@ class SecretModel extends BaseModel
 
     $this->setExpiration($lastInsertedId);
 
-    return $this->get($payload['hash']);
+    return $this->getByHash($payload['hash']);
+  }
+
+  /**
+   * Query a secret from the database and decrease it's remaining views value
+   * @param string $hash
+   * @return null|array
+   * @throws InvalidArgumentException
+   * @throws PDOException
+   */
+  public function get(string $hash): ?array
+  {
+    // TODO: Would be better to run it in transaction
+
+    // I call decrementRemainingViews method first,
+    // because I want to return an actual remaining views value
+    $this->decrementRemainingViews($hash);
+
+    return $this->getByHash($hash);
   }
 
   /**
@@ -54,7 +72,7 @@ class SecretModel extends BaseModel
    * @throws InvalidArgumentException
    * @throws PDOException
    */
-  public function get(string $hash): ?array
+  private function getByHash(string $hash): ?array
   {
     $query = <<<SQL
             select
@@ -71,7 +89,9 @@ class SecretModel extends BaseModel
               and secrets.hash=:hash
             SQL;
 
+
     $secret = $this->database->fetch($query, ['hash' => $hash]);
+
 
     if (empty($secret) || $this->isExpired($secret)) {
       return null;
@@ -117,7 +137,31 @@ class SecretModel extends BaseModel
 
     $now = new DateTimeImmutable();
 
-    return $remainingViews === 0
+    // $remainingViews can be a negative number,
+    // if the secret is expired but it's still exists in the database
+    // because the automated deletion event schedule doesn't fire yet
+
+    // If the remainingViews is 0, that means there is no more available views except the actual one
+    return $remainingViews < 0
       || $expiresAt < $now->format('Y-m-d H:i:s');
+  }
+
+  /**
+   *
+   * @param int $id
+   * @return null|array
+   * @throws InvalidArgumentException
+   * @throws PDOException
+   */
+  private function decrementRemainingViews(string $hash)
+  {
+    $query = <<<SQL
+              update secret_expirations
+                join secrets ON secrets.id = secret_expirations.secret_id
+              set secret_expirations.remaining_views = secret_expirations.remaining_views - 1
+                where secrets.hash = :hash
+            SQL;
+
+    return $this->database->fetch($query, ['hash' => $hash]);
   }
 }
