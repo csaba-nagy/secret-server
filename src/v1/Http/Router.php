@@ -20,7 +20,8 @@ final class Router
         match (count($path)) {
             1 => [$version] = $path,
             2 => [$version, $segment] = $path,
-            3 => [$version, $segment, $param] = $path
+            3 => [$version, $segment, $param] = $path,
+            default => throw new RouteNotFoundException()
         };
 
         $this->controller = $this->createController($version, $segment ?? 'index');
