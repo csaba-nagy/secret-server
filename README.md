@@ -12,42 +12,30 @@
 To start the application, use the `composer dev` command.
 
 Once the application is running you can use the following routes:
-```php
-  GET => [
-    'http://host:port/v1/secret/{hash}' => Receive the secret by the given hash
-  ]
-
-  POST => [
-    'http://host:port/v1/secret/'       => Creates a secret
-  ]
+```js
+  GET: 'http://host:port/v1/secret/{hash}'
+  POST: 'http://host:port/v1/secret/'
 ```
 
 > The API is sending responses in JSON format and this is the only available option for now.
 
 ### Required payload parameters for POST requests
-```json
+```js
 {
-  // your secret text
-  "secret":  "top_secret",
-
-  // expiration times in minutes
-  "expiresAfter" : 5,
-
-  // expires after the given number of views
+  "secret": "top_secret",
+  "expiresAfter": 5,
   "expiresAfterViews": 1
 }
 ```
 The secrets cannot be accessable and will be deleted from the database when they expired.
 
 ### Response format
-```json
-[
-	{
-		"hash": "99dd9222-8",
-		"secretText": "secret server",
-		"createdAt": "2023-05-13 14:52:04",
-		"expiresAt": "2023-05-13 14:57:04",
-		"remainingViews": 0
-	}
-]
+```js
+{
+  "hash": "99dd9222-8",
+  "secretText": "secret server",
+  "createdAt": "2023-05-13 14:52:04",
+  "expiresAt": "2023-05-13 14:57:04",
+  "remainingViews": 0
+}
 ```
