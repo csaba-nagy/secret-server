@@ -15,14 +15,17 @@ final class Router
 
   public function __construct(private Request $request)
   {
-    $route = $request->getExplodedUri();
+    $path = $request->getExplodedUri();
 
-    $router = $route[0] ?? null;
-    $param = $route[1] ?? null;
+    match (count($path)) {
+      1 => [$version] = $path,
+      2 => [$version, $segment] = $path,
+      3 => [$version, $segment, $param] = $path
+    };
 
-    $this->controller = $this->createController(empty($router) ? 'index' : $router);
+    $this->controller = $this->createController($version, $segment ?? 'index');
 
-    $this->request->setParams(['param' => $param]);
+    $this->request->setParams(['param' => $param ?? null]);
   }
 
   /**
@@ -35,15 +38,16 @@ final class Router
   }
 
   /**
-   *
+   * Dinamically creates a controller and call the required method
+   * according to the request path and request method
    * @param string $controllerName
    * @return ControllerInterface
    * @throws RouteNotFoundException
    */
-  private function createController(string $controllerName): ControllerInterface
+  private function createController(string | null $apiVersion, string $controllerName): ControllerInterface
   {
     $prefix = ucfirst($controllerName);
-    $controller = "SecretServer\Api\\v1\Controllers\\{$prefix}Controller";
+    $controller = "SecretServer\Api\\{$apiVersion}\Controllers\\{$prefix}Controller";
 
     if (class_exists($controller)) {
       $class = new $controller();
