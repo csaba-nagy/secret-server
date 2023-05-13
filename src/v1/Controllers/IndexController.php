@@ -10,15 +10,15 @@ use SecretServer\Enums\HttpStatusCode;
 
 class IndexController extends BaseController
 {
-  public function __construct()
-  {
-    parent::__construct();
-  }
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
-  public function index(Request $request): Response
-  {
-    $body = 'Secret Server';
+    public function index(Request $request): Response
+    {
+        $body = 'Secret Server';
 
-    return new Response($request->getAcceptHeader(), HttpStatusCode::OK, $body);
-  }
+        return new Response($request->getAcceptHeader(), HttpStatusCode::OK, $body);
+    }
 }

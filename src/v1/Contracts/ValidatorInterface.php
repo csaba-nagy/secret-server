@@ -6,9 +6,9 @@ namespace SecretServer\Api\v1\Contracts;
 
 interface ValidatorInterface
 {
-  /**
-   *
-   * @return array|bool
-   */
-  public function validate(): array | bool;
+    /**
+     *
+     * @return array|bool
+     */
+    public function validate(): array | bool;
 }

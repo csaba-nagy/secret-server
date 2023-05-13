@@ -6,15 +6,15 @@ namespace SecretServer\Database;
 
 final class Database
 {
-  private static ?DatabaseConnector $connection;
+    private static ?DatabaseConnector $connection;
 
-  /**
-   *
-   * @return DatabaseConnector
-   */
-  public static function getConnection()
-  {
-    return self::$connection
-      ??= new DatabaseConnector();
-  }
+    /**
+     *
+     * @return DatabaseConnector
+     */
+    public static function getConnection()
+    {
+        return self::$connection
+        ??= new DatabaseConnector();
+    }
 }

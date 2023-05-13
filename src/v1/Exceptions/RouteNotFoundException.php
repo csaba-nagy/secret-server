@@ -6,5 +6,5 @@ use Exception;
 
 class RouteNotFoundException extends Exception
 {
-  protected $message = '404 NOT_FOUND';
+    protected $message = '404 NOT_FOUND';
 }

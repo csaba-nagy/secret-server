@@ -9,5 +9,5 @@ namespace SecretServer\Enums;
  */
 enum DatabaseDriver: string
 {
-  case MYSQL = 'mysql';
+    case MYSQL = 'mysql';
 }

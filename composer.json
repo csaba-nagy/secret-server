@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "php -S localhost:8080 -t ./public",
     "sniff": "phpcs --standard=PSR12 ./src",
-    "sniff-and-fix": "./vendor/bin/phpcbf -h"
+    "sniff-and-fix": "./vendor/bin/phpcbf -p ./src"
   },
   "autoload": {
     "psr-4": {

@@ -11,52 +11,53 @@ use SecretServer\Api\v1\Http\Request;
 
 final class Router
 {
-  private ControllerInterface $controller;
+    private ControllerInterface $controller;
 
-  public function __construct(private Request $request)
-  {
-    $path = $request->getExplodedUri();
+    public function __construct(private Request $request)
+    {
+        $path = $request->getExplodedUri();
 
-    match (count($path)) {
-      1 => [$version] = $path,
-      2 => [$version, $segment] = $path,
-      3 => [$version, $segment, $param] = $path
-    };
+        match (count($path)) {
+            1 => [$version] = $path,
+            2 => [$version, $segment] = $path,
+            3 => [$version, $segment, $param] = $path
+        };
 
-    $this->controller = $this->createController($version, $segment ?? 'index');
+        $this->controller = $this->createController($version, $segment ?? 'index');
 
-    $this->request->setParams(['param' => $param ?? null]);
-  }
-
-  /**
-   *
-   * @return Response
-   */
-  public function resolve()
-  {
-    return $this->controller->{$this->request->getMethod()}($this->request);
-  }
-
-  /**
-   * Dinamically creates a controller and call the required method
-   * according to the request path and request method
-   * @param string $controllerName
-   * @return ControllerInterface
-   * @throws RouteNotFoundException
-   */
-  private function createController(string | null $apiVersion, string $controllerName): ControllerInterface
-  {
-    $prefix = ucfirst($controllerName);
-    $controller = "SecretServer\Api\\{$apiVersion}\Controllers\\{$prefix}Controller";
-
-    if (class_exists($controller)) {
-      $class = new $controller();
-
-      if (method_exists($class, $this->request->getMethod())) {
-        return $class;
-      }
+        $this->request->setParams(['param' => $param ?? null]);
     }
 
-    return new ErrorController();
-  }
+    /**
+     *
+     * @return Response
+     */
+    public function resolve()
+    {
+        return $this->controller->{$this->request->getMethod()}($this->request);
+    }
+
+    /**
+     * Dinamically creates a controller and call the required method
+     * according to the request path and request method
+     *
+     * @param  string $controllerName
+     * @return ControllerInterface
+     * @throws RouteNotFoundException
+     */
+    private function createController(string | null $apiVersion, string $controllerName): ControllerInterface
+    {
+        $prefix = ucfirst($controllerName);
+        $controller = "SecretServer\Api\\{$apiVersion}\Controllers\\{$prefix}Controller";
+
+        if (class_exists($controller)) {
+            $class = new $controller();
+
+            if (method_exists($class, $this->request->getMethod())) {
+                return $class;
+            }
+        }
+
+        return new ErrorController();
+    }
 }
