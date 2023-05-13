@@ -6,6 +6,7 @@ namespace SecretServer\Api\v1\Repositories;
 
 use SecretServer\Api\v1\Abstracts\BaseRepository;
 use SecretServer\Api\v1\Models\SecretModel;
+use SecretServer\Api\v1\Utils\Hash;
 
 class SecretRepository extends BaseRepository
 {
@@ -23,7 +24,12 @@ class SecretRepository extends BaseRepository
    */
   public function create(array $payload): array
   {
-    return $this->model->create($payload);
+    $hash = Hash::generate();
+
+    return $this->model->create([
+      'hash' => $hash,
+      ...$payload
+    ]);
   }
 
   /**
