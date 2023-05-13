@@ -26,6 +26,12 @@ class PayloadValidator implements ValidatorInterface
    */
   public function validate(): array
   {
+    $this->checkRequiredParams();
+
+    if (empty($this->result['error'])) {
+      return $this->result;
+    }
+
     foreach ($this->payload as $paramKey => $value) {
       $index = array_search($value, array_values($this->payload));
       $validatorName = array_keys($this->payload)[$index];
@@ -73,6 +79,26 @@ class PayloadValidator implements ValidatorInterface
       }
     }
     return $this->result;
+  }
+
+  /**
+   * Checks that all of the schema parameters are defined in payload.
+   * Optional parameters are not supported for now
+   * @return void
+   */
+  private function checkRequiredParams(): void
+  {
+    $requiredParams = array_keys($this->schema);
+
+    foreach ($requiredParams as $param) {
+      $isValid = in_array($param, array_keys($this->payload));
+
+      if (!$isValid) {
+        $this->result['error'][$param] = "{$param} parameter is required!";
+      }
+
+      $this->result['data'][$param] = $isValid;
+    }
   }
 
   private function minLength(mixed $value, int | string $minLength): array
@@ -128,7 +154,6 @@ class PayloadValidator implements ValidatorInterface
 
       return $result;
     }
-
 
     $isValid = strlen($value) < $maxLength;
 
