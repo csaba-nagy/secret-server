@@ -26,9 +26,10 @@ class SecretController extends BaseController
   {
     $schema = [
       'secret' => 'text|minLength=3|maxLength=500',
-      'expiresAfter' => 'numeric=unsigned',
-      'expireAfterViews' => 'numeric=unsigned'
+      'expiresAfter' => 'numeric',
+      'expireAfterViews' => 'numeric'
     ];
+
 
     $validator = new PayloadValidator($request->getPayload(), $schema);
     ['error' => $error] = $validator->validate();

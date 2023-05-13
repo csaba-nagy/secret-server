@@ -28,13 +28,12 @@ class PayloadValidator implements ValidatorInterface
   {
     $this->checkRequiredParams();
 
-    if (empty($this->result['error'])) {
+    if (!empty($this->result['error'])) {
       return $this->result;
     }
 
     foreach ($this->payload as $paramKey => $value) {
-      $index = array_search($value, array_values($this->payload));
-      $validatorName = array_keys($this->payload)[$index];
+      $validatorName = $paramKey;
 
       $rules = $this->schema[$validatorName];
 
@@ -61,6 +60,7 @@ class PayloadValidator implements ValidatorInterface
           }
 
           $this->result['data'][$validatorName] = $data;
+
         } else {
           if (!method_exists($this, $validator)) {
             throw new PayloadValidationException("Invalid validator method: {$validator}!");
@@ -82,7 +82,7 @@ class PayloadValidator implements ValidatorInterface
   }
 
   /**
-   * Checks that all of the schema parameters are defined in payload.
+   * Checks that all of the schema parameters are defined in the payload.
    * Optional parameters are not supported for now
    * @return void
    */
@@ -101,11 +101,17 @@ class PayloadValidator implements ValidatorInterface
     }
   }
 
+  /**
+   *
+   * @param mixed $value
+   * @param int|string $minLength
+   * @return array
+   */
   private function minLength(mixed $value, int | string $minLength): array
   {
     $result = [
-      'error' => null,
-      'data' => null
+      'error' => [],
+      'data' => false
     ];
 
     if (!is_string($value)) {
@@ -116,7 +122,7 @@ class PayloadValidator implements ValidatorInterface
     }
 
     if (!is_numeric($minLength)) {
-      $result['error'] = 'Invalid parameter for ' . __METHOD__;
+      $result['error'] = 'Invalid parameter for minLength validator. IT should be ';
       $result['data'] = false;
 
       return $result;
@@ -134,22 +140,24 @@ class PayloadValidator implements ValidatorInterface
     return $result;
   }
 
+
+  /**
+   *
+   * @param mixed $value
+   * @param int|string $maxLength
+   * @return array
+   */
   private function maxLength(mixed $value, int | string $maxLength): array
   {
     $result = [
-      'error' => null,
-      'data' => null
+      'error' => [],
+      'data' => false
     ];
 
-    if (!is_string($value)) {
-      $result['error'] = 'The given value is not a string!';
-      $result['data'] = false;
-
-      return $result;
-    }
+    $this->text($value);
 
     if (!is_numeric($maxLength)) {
-      $result['error'] = 'Invalid parameter for ' . __METHOD__;
+      $result['error'] = 'Invalid parameter for maxLength validation.';
       $result['data'] = false;
 
       return $result;
@@ -158,7 +166,7 @@ class PayloadValidator implements ValidatorInterface
     $isValid = strlen($value) < $maxLength;
 
     if (!$isValid) {
-      $result['error'] = "The given string should be maximum {$maxLength} characters long!";
+      $result['error'] = "The given string should be maximum {$maxLength} characters long.";
     }
 
     $result['data'] = $isValid;
@@ -166,22 +174,34 @@ class PayloadValidator implements ValidatorInterface
     return $result;
   }
 
-  private function numeric(mixed $value, string $flag): array
+  /**
+   * Checks that the given value is a valid numeric or numeric string and it should be greater than 0.
+   * @param mixed $value
+   * @param null|string $flag Accepted flags: unsigned
+   * @return array
+   * @throws PayloadValidationException
+   */
+  private function numeric(mixed $value): array
   {
-    $isValid = is_numeric($value) && $value > 0;
+    $isValid = is_numeric($value) && (int) $value > 0;
 
     return [
-      'error' => $isValid ? null : 'The given value should be a positive integer number!',
+      'error' => $isValid ? null : "The given value should be a positive integer number! Received: {$value}",
       'data' => $isValid
     ];
   }
 
+  /**
+   * Checks that the given value is a valid string
+   * @param mixed $value
+   * @return array
+   */
   private function text(mixed $value): array
   {
     $isValid = is_string($value);
 
     return [
-      'error' => $isValid ? null : 'The given value should be a string!',
+      'error' => $isValid ? null : 'The given value is invalid. It should be a string!',
       'data' => $isValid
     ];
   }

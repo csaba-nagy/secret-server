@@ -27,7 +27,7 @@ final class Router
 
   /**
    *
-   * @return mixed
+   * @return Response
    */
   public function resolve()
   {
