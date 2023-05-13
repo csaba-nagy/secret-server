@@ -13,20 +13,18 @@ final class Hash
   // With this length we can ensure the uniqueness of the hash
   // and it takes less space in the database
   // In a real production app, It cannot be a good practice, but in this project should be enough.
+  private static int $length = 10;
+
   /**
    * Generates a hash string
    * @param int $length
    * @return string
    * @throws InvalidArgumentException
    */
-  public static function generate(int $length = 10)
+  public static function generate()
   {
-    if ($length < 5 || $length > 10) {
-      throw new InvalidArgumentException("The generated hash length should be between 5 and 10. Received: {$length}");
-    }
-
     $uuid = Uuid::uuid4()->toString();
 
-    return substr($uuid, 0, $length);
+    return substr($uuid, 0, self::$length);
   }
 }
