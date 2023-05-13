@@ -3,7 +3,9 @@
   "description": "My solution to the Secret Server Task",
   "type": "project",
   "scripts": {
-    "dev": "php -S localhost:8080 -t ./public"
+    "dev": "php -S localhost:8080 -t ./public",
+    "sniff": "phpcs --standard=PSR12 ./src",
+    "sniff-and-fix": "./vendor/bin/phpcbf -h"
   },
   "autoload": {
     "psr-4": {
@@ -19,7 +21,8 @@
   ],
   "minimum-stability": "stable",
   "require-dev": {
-    "symfony/var-dumper": "^6.2"
+    "symfony/var-dumper": "^6.2",
+    "squizlabs/php_codesniffer": "3.*"
   },
   "require": {
     "ramsey/uuid": "^4.7"
