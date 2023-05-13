@@ -31,8 +31,8 @@ class SecretModel extends BaseModel
     {
         // TODO: Would be better to run it in transaction
         $query = <<<SQL
-              insert into secrets(hash, secret)
-              values(:hash, :secret)
+              INSERT INTO secrets(hash, secret)
+              VALUES(:hash, :secret)
               SQL;
 
         $this->database->fetch(
@@ -79,18 +79,18 @@ class SecretModel extends BaseModel
     private function getByHash(string $hash): ?array
     {
         $query = <<<SQL
-            select
-              secrets.hash as hash,
-              secrets.secret as secretText,
-              secrets.created_at as createdAt,
-              secret_expirations.expires_at as expiresAt,
-              secret_expirations.remaining_views as remainingViews
-            from
+            SELECT
+              secrets.hash AS hash,
+              secrets.secret AS secretText,
+              secrets.created_at AS createdAt,
+              secret_expirations.expires_at AS expiresAt,
+              secret_expirations.remaining_views AS remainingViews
+            FROM
               secrets
-              join secret_expirations on 1=1
-                and secrets.id=secret_expirations.secret_id
-            where 1=1
-              and secrets.hash=:hash
+            JOIN secret_expirations ON 1=1
+              AND secrets.id=secret_expirations.secret_id
+            WHERE 1=1
+              AND secrets.hash=:hash
             SQL;
 
 
@@ -116,8 +116,8 @@ class SecretModel extends BaseModel
     private function setExpiration(int $id, ?int $minutes = null, ?int $remainingViews = null): void
     {
         $query = <<<SQL
-              insert into secret_expirations(secret_id, expires_at, remaining_views)
-              values(:secret_id, NOW() + INTERVAL :expires_at MINUTE, :remaining_views)
+              INSERT INTO secret_expirations(secret_id, expires_at, remaining_views)
+              VALUES(:secret_id, NOW() + INTERVAL :expires_at MINUTE, :remaining_views)
               SQL;
 
         $expiration = $minutes ?? $this->defaultExpirationInMinutes;
@@ -164,10 +164,12 @@ class SecretModel extends BaseModel
     private function decrementRemainingViews(string $hash)
     {
         $query = <<<SQL
-              update secret_expirations
-                join secrets ON secrets.id = secret_expirations.secret_id
-              set secret_expirations.remaining_views = secret_expirations.remaining_views - 1
-                where secrets.hash = :hash
+              UPDATE secret_expirations
+              JOIN secrets ON 1=1
+                AND secrets.id = secret_expirations.secret_id
+              SET secret_expirations.remaining_views = secret_expirations.remaining_views - 1
+              WHERE 1=1
+                AND secrets.hash = :hash
             SQL;
 
         return $this->database->fetch($query, ['hash' => $hash]);
