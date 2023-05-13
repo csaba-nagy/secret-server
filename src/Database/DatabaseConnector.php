@@ -90,7 +90,6 @@ final class DatabaseConnector
         return $this->statement?->fetchAll() ?: null;
     }
 
-    // TODO: Add proper param description
     /**
      *
      * @param  string     $query
@@ -114,7 +113,61 @@ final class DatabaseConnector
         return (int) $this->pdo?->lastInsertId($name);
     }
 
-    // TODO: Add a proper param description
+    /**
+     * Wrapper method for PDO::beginTransaction
+     *
+     * @return bool
+     * @throws PDOException
+     */
+    public function startTransaction()
+    {
+        return $this->pdo->beginTransaction();
+    }
+
+    /**
+     * Wrapper method for PDO::commit
+     *
+     * @return bool
+     * @throws PDOException
+     */
+    public function commit()
+    {
+        return $this->pdo->commit();
+    }
+
+    /**
+     * Wrapper method for PDO::rollBack
+     *
+     * @return bool
+     * @throws PDOException
+     */
+    public function rollback()
+    {
+        return $this->pdo->rollBack();
+    }
+
+    /**
+     * Runs the given method in transaction
+     *
+     * @param  callable $method
+     * @return mixed
+     * @throws PDOException
+     */
+    public function runInTransaction(callable $method)
+    {
+        try {
+            $this->startTransaction();
+
+            $result = $method();
+
+            $this->commit();
+
+            return $result;
+        } catch (\Throwable $th) {
+            $this->rollback();
+        }
+    }
+
     /**
      * @param  DatabaseDriver $driver
      * @param  array|null     $values
