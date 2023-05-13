@@ -21,14 +21,17 @@ class Response implements ResponseInterface
 
   /**
    * Sends the right response format according to the Accept header
-   * If it is not properly set, it sends 406 Not acceptable
+   * If it is not properly set, it sends the response in JSON format by default
    * @return string
    */
   public function send(): string
   {
     return match (1) {
       preg_match('/application\/json/', $this->acceptHeader) => $this->sendJSON(),
-      default => $this->reject(HttpStatusCode::NOT_ACCEPTABLE, 'INVALID_OR_MISSING_HEADER_PARAMETER')
+      default => $this->sendJSON()
+
+      // It's possible to reject a request without Accept header, but this might be too strict
+      // default => $this->reject(HttpStatusCode::NOT_ACCEPTABLE, 'INVALID_OR_MISSING_HEADER_PARAMETER')
     };
   }
 
@@ -50,7 +53,7 @@ class Response implements ResponseInterface
 
 
   /**
-   *
+   *  Rejects the request
    * @param HttpStatusCode $statusCode
    * @param string $message
    * @return string
@@ -60,6 +63,6 @@ class Response implements ResponseInterface
   {
     http_response_code($statusCode->value);
 
-    throw new Exception($message);
+    return json_encode($message, JSON_PRETTY_PRINT);
   }
 }
