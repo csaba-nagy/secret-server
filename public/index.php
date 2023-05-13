@@ -6,8 +6,11 @@ use SecretServer\Api\v1\Http\Request;
 require __DIR__ . '/../vendor/autoload.php';
 
 try {
-  $router = new Router(new Request());
-  dump($router->resolve()->send());
+  $request = new Request();
+  $router = new Router($request);
+  dump($router
+    ->resolve()
+    ->send());
 } catch (\Throwable $th) {
   dump($th->getMessage());
 }
