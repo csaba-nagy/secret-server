@@ -29,25 +29,28 @@ class SecretModel extends BaseModel
      */
     public function create(array $payload): array
     {
-        // TODO: Would be better to run it in transaction
         $query = <<<SQL
               INSERT INTO secrets(hash, secret)
               VALUES(:hash, :secret)
               SQL;
 
-        $this->database->fetch(
-            $query,
-            [
-              'hash' => $payload['hash'],
-              'secret' => $payload['secret']
-            ]
+        return $this->database->runInTransaction(
+            function () use ($query, $payload) {
+                $this->database->fetch(
+                    $query,
+                    [
+                    'hash' => $payload['hash'],
+                    'secret' => $payload['secret']
+                    ]
+                );
+
+                $lastInsertedId = $this->database->getLastInsertedId();
+
+                $this->setExpiration($lastInsertedId);
+
+                return $this->getByHash($payload['hash']);
+            }
         );
-
-        $lastInsertedId = $this->database->getLastInsertedId();
-
-        $this->setExpiration($lastInsertedId);
-
-        return $this->getByHash($payload['hash']);
     }
 
     /**
@@ -60,13 +63,15 @@ class SecretModel extends BaseModel
      */
     public function get(string $hash): ?array
     {
-        // TODO: Would be better to run it in transaction
+        return $this->database->runInTransaction(
+            function () use ($hash) {
+                // I call decrementRemainingViews method first,
+                // because I want to return an actual remaining views value
+                $this->decrementRemainingViews($hash);
 
-        // I call decrementRemainingViews method first,
-        // because I want to return an actual remaining views value
-        $this->decrementRemainingViews($hash);
-
-        return $this->getByHash($hash);
+                return $this->getByHash($hash);
+            }
+        );
     }
 
     /**
