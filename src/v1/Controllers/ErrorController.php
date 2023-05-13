@@ -10,10 +10,10 @@ use SecretServer\Enums\HttpStatusCode;
 
 class ErrorController extends BaseController
 {
-  public function index(Request $request): Response
-  {
-    $body = 'NOT_FOUND';
+    public function index(Request $request): Response
+    {
+        $body = 'NOT_FOUND';
 
-    return new Response($request->getAcceptHeader(), HttpStatusCode::NOT_FOUND, $body);
-  }
+        return new Response($request->getAcceptHeader(), HttpStatusCode::NOT_FOUND, $body);
+    }
 }
