@@ -12,8 +12,8 @@ use SecretServer\Database\Database;
 
 class SecretModel extends BaseModel
 {
-    private $defaultViews = 1;
-    private $defaultExpirationInMinutes = 5;
+    private int $defaultViews = 1;
+    private int $defaultExpirationInMinutes = 5;
 
     public function __construct()
     {
@@ -46,7 +46,11 @@ class SecretModel extends BaseModel
 
                 $lastInsertedId = $this->database->getLastInsertedId();
 
-                $this->setExpiration($lastInsertedId);
+                $this->setExpiration(
+                  $lastInsertedId,
+                  $payload['expiresAfter'],
+                  $payload['expireAfterViews']
+              );
 
                 return $this->getByHash($payload['hash']);
             }
