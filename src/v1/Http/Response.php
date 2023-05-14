@@ -48,6 +48,8 @@ class Response implements ResponseInterface
      */
     private function sendJSON(): string
     {
+        header('Content-Type: application/json; charset=utf-8');
+
         http_response_code($this->statusCode->value);
 
         return json_encode($this->body, JSON_PRETTY_PRINT);
@@ -64,6 +66,8 @@ class Response implements ResponseInterface
      */
     private function reject(HttpStatusCode $statusCode, string $message): string
     {
+        header('Content-Type: application/json; charset=utf-8');
+
         http_response_code($statusCode->value);
 
         return json_encode($message, JSON_PRETTY_PRINT);
