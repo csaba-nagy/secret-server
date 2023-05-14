@@ -8,8 +8,6 @@ You can use the following routes to test this:
 
 | Request Method | Route                                  | Action                                                     |
 | ---------------| ---------------------------------------|------------------------------------------------------------|
-| GET            | http://134.122.88.24/v1                | Returns the project name                                   |
-| GET            | http://134.122.88.24/v1/secret         | Returns a famous quote with a little twist                 |
 | GET            | http://134.122.88.24/v1/secret/{hash}  | Returns the secret message which belongs to the given hash |
 | POST           | http://134.122.88.24/v1/secret         | Creates a secret message                                   |
 
@@ -23,7 +21,13 @@ You can use the following routes to test this:
   "expiresAfterViews": 1
 }
 ```
-> The secrets cannot be accessable and will be deleted from the database when they expired.
+> secret: Your secret text
+
+> expiresAfter: The value refers to the secret lifetime in minutes.
+
+> expireFterViews: It refers to the number of the available views. If it decreased to 0, the secret is no longer available.
+
+> The secrets will be deleted from the database when they expired.
 
 **Response format**
 > The API is sending responses in JSON format and this is the only available option for now.
