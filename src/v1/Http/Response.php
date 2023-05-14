@@ -28,11 +28,11 @@ class Response implements ResponseInterface
     public function send(): string
     {
         return match (1) {
-            preg_match('/application\/json/', $this->acceptHeader) => $this->sendJSON(),
-            default => $this->sendJSON()
+            preg_match('/application\/json/', $this->acceptHeader) => $this->sendJSON($this->body, $this->statusCode),
+            default => $this->sendJSON($this->body, $this->statusCode)
 
             // It's possible to reject a request without Accept header, but this might be too strict
-            // default => $this->reject(HttpStatusCode::NOT_ACCEPTABLE, 'INVALID_OR_MISSING_HEADER_PARAMETER')
+            // default => $this->sendJSON('INVALID_OR_MISSING_HEADER_PARAMETER', HttpStatusCode::NOT_ACCEPTABLE)
         };
     }
 
@@ -44,32 +44,16 @@ class Response implements ResponseInterface
     /**
      * Sends a response to the client in JSON format
      *
-     * @return string
-     */
-    private function sendJSON(): string
-    {
-        header('Content-Type: application/json; charset=utf-8');
-
-        http_response_code($this->statusCode->value);
-
-        return json_encode($this->body, JSON_PRETTY_PRINT);
-    }
-
-
-    /**
-     *  Rejects the request
-     *
+     * @param  array|string   $body
      * @param  HttpStatusCode $statusCode
-     * @param  string         $message
      * @return string
-     * @throws Exception
      */
-    private function reject(HttpStatusCode $statusCode, string $message): string
+    private function sendJSON(array|string $body, HttpStatusCode $statusCode): string
     {
         header('Content-Type: application/json; charset=utf-8');
 
         http_response_code($statusCode->value);
 
-        return json_encode($message, JSON_PRETTY_PRINT);
+        return json_encode($body, JSON_PRETTY_PRINT);
     }
 }
