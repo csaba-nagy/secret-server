@@ -1,25 +1,21 @@
-# Solution of the "Secret Server Coding Task"
+# Solution of the Secret Server Coding Task
 
-## Installation
-1. Clone this project via: `git clone https://github.com/csaba-nagy/secret-server.git`
-2. Create the *.env* file via `cp .env.example .env` command and set the environment variables
-3. [ OPTIONAL ] Open the project in Dev Container with VsCode.
-4. import the files from the workspace/src/Database/exported folder to the database.
-  (You can use phpmyadmin to do that, it's included)
-5. Run `composer install` command to install the dependencies.
 
 ## Usage
-To start the application, use the `composer dev` command.
+The API is available at [here](http://134.122.88.24/v1).
 
-Once the application is running you can use the following routes:
-```js
-  GET: 'http://host:port/v1/secret/{hash}'
-  POST: 'http://host:port/v1/secret/'
-```
+You can use the following routes to test this:
 
-> The API is sending responses in JSON format and this is the only available option for now.
+| Request Method | Route                                  | Action                                                     |
+| ---------------| ---------------------------------------|------------------------------------------------------------|
+| GET            | http://134.122.88.24/v1                | Returns the project name                                   |
+| GET            | http://134.122.88.24/v1/secret         | Returns a famous quote with a little twist                 |
+| GET            | http://134.122.88.24/v1/secret/{hash}  | Returns the secret message which belongs to the given hash |
+| POST           | http://134.122.88.24/v1/secret         | Creates a secret message                                   |
 
-### Required payload parameters for POST requests
+> To test these functionalities standalone, you can use Postman or Insomnia for example.
+
+**Required payload parameters to creating secrets:**
 ```js
 {
   "secret": "top_secret",
@@ -27,15 +23,45 @@ Once the application is running you can use the following routes:
   "expiresAfterViews": 1
 }
 ```
-The secrets cannot be accessable and will be deleted from the database when they expired.
+> The secrets cannot be accessable and will be deleted from the database when they expired.
 
-### Response format
+**Response format**
+> The API is sending responses in JSON format and this is the only available option for now.
+
 ```js
 {
   "hash": "99dd9222-8",
-  "secretText": "secret server",
+  "secretText": "top_secret",
   "createdAt": "2023-05-13 14:52:04",
   "expiresAt": "2023-05-13 14:57:04",
   "remainingViews": 0
 }
 ```
+
+## Local Usage
+
+**Installation**
+1. Clone this project via:
+```
+git clone https://github.com/csaba-nagy/secret-server.git
+```
+2. Create the *.env* file with the following command and set the environment variables:
+```
+cp .env.example .env
+```
+3. [ OPTIONAL ] Open the project in Dev Container with Docker and VsCode.
+4. Import the files from the workspace/src/Database/exported folder to the database, you can use phpmyadmin to do that. [^1]
+5. Run the following command to install dependencies:
+```
+composer install
+```
+
+**Start**
+
+To start the application, use:
+```
+composer dev
+```
+The default path is http://localhost:8080. If you want to change it, you can edit it in *composer.json*.
+
+[^1]: If you are using docker and devcontainer, it's included
