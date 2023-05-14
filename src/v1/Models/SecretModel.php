@@ -46,11 +46,15 @@ class SecretModel extends BaseModel
 
                 $lastInsertedId = $this->database->getLastInsertedId();
 
+                // the $this->setExpiration method should get the params as integer
+                // since the validator checked these arguments are numeric types (integers or numeric strings)
+                // we can be sure about that if we convert the types of the given parameters,
+                // it will not cause any error
                 $this->setExpiration(
-                  $lastInsertedId,
-                  $payload['expiresAfter'],
-                  $payload['expireAfterViews']
-              );
+                    $lastInsertedId,
+                    (int) $payload['expiresAfter'],
+                    (int) $payload['expireAfterViews']
+                );
 
                 return $this->getByHash($payload['hash']);
             }
@@ -102,8 +106,7 @@ class SecretModel extends BaseModel
               AND secrets.hash=:hash
             SQL;
 
-
-        $secret = $this->database->fetch($query, ['hash' => $hash]);
+        $secret = $this->database->fetch($query, ['hash' => $hash])[0];
 
 
         if (empty($secret) || $this->isExpired($secret)) {
@@ -149,8 +152,8 @@ class SecretModel extends BaseModel
      */
     private function isExpired(array $fetchedSecret): bool
     {
-        $remainingViews = $fetchedSecret[0]['remainingViews'];
-        $expiresAt = $fetchedSecret[0]['expiresAt'];
+        $remainingViews = $fetchedSecret['remainingViews'];
+        $expiresAt = $fetchedSecret['expiresAt'];
 
         $now = new DateTimeImmutable();
 
